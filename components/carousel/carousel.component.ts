@@ -17,11 +17,11 @@ export enum Direction {UNKNOWN, NEXT, PREV}
          <li *ngFor="let slidez of slides" [class.active]="slidez.active === true" (click)="select(slidez)"></li>
       </ol>
       <div class="carousel-inner"><ng-content></ng-content></div>
-      <a class="left carousel-control" (click)="prev()" *ngIf="slides.length && currentSlide?.hasPreviousSibling">
+      <a class="left carousel-control" (click)="prev()" *ngIf="slides.length > 1" [class.disabled]= "(!currentSlide?.hasPreviousSibling && noWrap)">
         <span class="icon-prev" aria-hidden="true"></span>
         <span *ngIf="isBS4" class="sr-only">Previous</span>
       </a>
-      <a class="right carousel-control" (click)="next()" *ngIf="slides.length && currentSlide?.hasNextSibling">
+      <a class="right carousel-control" (click)="next()" *ngIf="slides.length > 1" [class.disabled]= "(!currentSlide?.hasNextSibling && noWrap)">
         <span class="icon-next" aria-hidden="true"></span>
         <span *ngIf="isBS4" class="sr-only">Next</span>
       </a>

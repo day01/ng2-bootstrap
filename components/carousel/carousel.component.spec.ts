@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 
 import { CarouselModule } from './carousel.module';
 
@@ -80,14 +80,14 @@ describe('Component: Carousel', () => {
     expectActiveSlides(element, [true, false, false]);
   });
 
-  // TODO:
-  xit('should be able to select a slide via model changes', () => {
+  it('should be able to select a slide via model changes', () => {
     context.slides[2].active = true;
     fixture.detectChanges();
     expectActiveSlides(element, [false, false, true]);
   });
 
   it('should create next/prev nav button', () => {
+    context.slides[1].active = true;
     let prev = element.querySelectorAll('a.left');
     let next = element.querySelectorAll('a.right');
     expect(prev.length).toBe(1);
@@ -99,8 +99,7 @@ describe('Component: Carousel', () => {
     expect(indicators.length).toBe(3);
   });
 
-  // TODO:
-  xit('should hide navigation when only one slide', () => {
+  it('should hide navigation when only one slide', () => {
     context.slides.splice(0, 2);
     fixture.detectChanges();
     expect(context.slides.length).toBe(1);
@@ -112,16 +111,14 @@ describe('Component: Carousel', () => {
     expect(next.length).toBe(0);
   });
 
-  // TODO:
-  xit('should disable prev button when slide index is 0 and noWrap is truthy', () => {
+  it('should disable prev button when slide index is 0 and noWrap is truthy', () => {
     context.noWrapSlides = true;
     fixture.detectChanges();
     let prev = element.querySelector('a.left');
     expect(prev.classList).toContain('disabled');
   });
 
-  // TODO:
-  xit('should disable next button when last slide is active and noWrap is truthy', () => {
+  it('should disable next button when last slide is active and noWrap is truthy', () => {
     context.noWrapSlides = true;
     context.slides[2].active = true;
     fixture.detectChanges();
@@ -151,12 +148,12 @@ describe('Component: Carousel', () => {
     expectActiveSlides(element, [true, false, false]);
   });
 
-  // it('should change slide on time passage (default)', fakeAsync(() => {
-  //   expectActiveSlides(clean, [true, false]);
-  //   tick(6000);
-  //   fixture.detectChanges();
-  //   expectActiveSlides(clean, [false, true]);
-  // }));
+  it('should change slide on time passage (default)', fakeAsync(() => {
+    expectActiveSlides(clean, [true, false]);
+    tick(6000);
+    fixture.detectChanges();
+    expectActiveSlides(clean, [false, true]);
+  }));
 
   it('should wrap slide changes by default', () => {
     const prev = element.querySelector('a.left');
