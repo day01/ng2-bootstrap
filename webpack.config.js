@@ -25,10 +25,10 @@ function getWebpackConfig(env, config) {
   switch (env) {
   case 'prod':
   case 'production':
-    return require('ng2-webpack-config').webpack.prod(config);
+    return require('ng2-webpack-config').webpack.dev(config);
   case 'test':
   case 'testing':
-    return require('ng2-webpack-config').webpack.test(config);
+    return require('ng2-webpack-config').webpack.dev(config);
   case 'dev':
   case 'development':
   default:

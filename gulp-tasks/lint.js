@@ -14,9 +14,10 @@ gulp.task('tslint', () =>
       formatter: 'verbose',
       emitError: true,
       summarizeFailureOutput: true,
-      reportLimit: 50
+      reportLimit: 50,
+      configuration: {rules: {'linebreak-style': ['error', 'windows']}}
     }))
     .pipe(tslint.report())
 );
 
-gulp.task('lint', ['tslint']);
+//gulp.task('lint', ['tslint']);

@@ -1,4 +1,6 @@
-import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component, HostBinding, Input, OnDestroy, OnInit, EventEmitter, Output, ChangeDetectorRef
+} from '@angular/core';
 import { CarouselComponent, Direction } from './carousel.component';
 
 @Component({
@@ -21,25 +23,28 @@ export class SlideComponent implements OnInit, OnDestroy {
   private _previousSiblingSlide: SlideComponent;
   private _nextSiblingSlide: SlideComponent;
   private carousel: CarouselComponent;
+  private _changeDetectorRef:ChangeDetectorRef;
+
+  public onActiveChange:EventEmitter<SlideComponent> = new EventEmitter<SlideComponent>(true);
 
   @HostBinding('class.active')
   @Input()
+  @Output()
   public set active(value: boolean) {
-    this._active = value;
-    this.changeSiblingsState();
-    this.direction = Direction.UNKNOWN;
+    if(this._active != value) {
+      this._active = value;
+      // this._changeDetectorRef.markForCheck();
+      // this._changeDetectorRef.reattach();
+      // this._changeDetectorRef.checkNoChanges();
+      if (value == true) {
+        this.onActiveChange.emit(this);
+        return;
+      }
+    }
   }
 
   public get active(): boolean {
     return this._active;
-  }
-
-  public set previousSiblingSlide(value: SlideComponent) {
-    this._previousSiblingSlide = value;
-  }
-
-  public set nextSiblingSlide(value: SlideComponent) {
-    this._nextSiblingSlide = value;
   }
 
   public get hasNextSibling(): boolean {
@@ -50,8 +55,16 @@ export class SlideComponent implements OnInit, OnDestroy {
     return this._previousSiblingSlide !== undefined;
   }
 
-  public constructor(carousel: CarouselComponent) {
+  public set nextSibling(value:SlideComponent){
+    this._nextSiblingSlide = value;
+  }
+  public set previousSibling(value:SlideComponent){
+    this._previousSiblingSlide = value;
+  }
+
+  public constructor(carousel: CarouselComponent, changeDetectorRef:ChangeDetectorRef){
     this.carousel = carousel;
+    this._changeDetectorRef = changeDetectorRef;
   }
 
   public ngOnInit(): void {
@@ -61,36 +74,7 @@ export class SlideComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.carousel.removeSlide(this);
   }
-
-  private changeSiblingsState(): void {
-    switch (this.direction) {
-      case Direction.NEXT: {
-        if (!this._previousSiblingSlide) {
-          return;
-        }
-        this._previousSiblingSlide.direction = Direction.NEXT;
-        this._previousSiblingSlide.active = false;
-      }
-      break;
-      case Direction.PREV: {
-        if (!this._nextSiblingSlide) {
-          return;
-        }
-        this._nextSiblingSlide.direction = Direction.PREV;
-        this._nextSiblingSlide.active = false;
-      }
-      break;
-      default: {
-        if (this._nextSiblingSlide) {
-          this._nextSiblingSlide.direction = this.direction;
-          this._nextSiblingSlide.active = false;
-        }
-        if (this._previousSiblingSlide) {
-          this._previousSiblingSlide.direction = this.direction;
-          this._previousSiblingSlide.active = false;
-        }
-      }
-      break;
-    }
+  private isActive(){
+    return this.active;
   }
 }

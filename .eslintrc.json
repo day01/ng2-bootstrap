@@ -1,5 +1,8 @@
 {
   "extends": "./node_modules/eslint-config-valorsoft/.eslintrc.json",
+  "rules":{
+    "linebreak-style": ["error", "windows"]
+  },
   "env": {
     "node": true
   }

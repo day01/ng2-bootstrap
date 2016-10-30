@@ -24,7 +24,7 @@ async.waterfall([
   getSystemJsBundleConfig,
   buildSystemJs({minify: false, sourceMaps: true, mangle: false, noEmitHelpers: false, declaration: true}),
   getSystemJsBundleConfig,
-  buildSystemJs({minify: true, sourceMaps: true, mangle: false, noEmitHelpers: false, declaration: true})
+  buildSystemJs({minify: false, sourceMaps: true, mangle: false, noEmitHelpers: false, declaration: true})
 ], err => {
   if (err) {
     throw err;

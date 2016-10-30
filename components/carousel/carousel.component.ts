@@ -1,6 +1,6 @@
 // todo: add animate
 
-import { Component, Input, OnDestroy } from '@angular/core';
+import {Component, Input, OnDestroy, EventEmitter, ChangeDetectorRef} from '@angular/core';
 
 import { Ng2BootstrapConfig, Ng2BootstrapTheme } from '../ng2-bootstrap-config';
 import { SlideComponent } from './slide.component';
@@ -50,6 +50,12 @@ export class CarouselComponent implements OnDestroy {
   private currentSlide: SlideComponent;
   private _interval: number = 5000;
   private _lastAddedSlide: SlideComponent;
+  private _activeSlideChanged:EventEmitter<number> = new EventEmitter<number>(true);
+  private _changeDetectorRef:ChangeDetectorRef;
+
+  public constructor(changeDetectorRef:ChangeDetectorRef){
+    this._changeDetectorRef = changeDetectorRef;
+  }
 
   public get isBS4(): boolean {
     return Ng2BootstrapConfig.theme === Ng2BootstrapTheme.BS4;
@@ -113,15 +119,31 @@ export class CarouselComponent implements OnDestroy {
     slide.index = this.slides.length;
     this.slides.push(slide);
 
+    global["s" + slide.index] = slide;
+
     if (this.slides.length === 1 || slide.active) {
       this.select(slide);
       this.play();
     }
-    slide.previousSiblingSlide = this._lastAddedSlide;
+    slide.previousSibling = this._lastAddedSlide;
     if (this._lastAddedSlide) {
-      this._lastAddedSlide.nextSiblingSlide = slide;
+      this._lastAddedSlide.nextSibling = slide;
     }
+
     this._lastAddedSlide = slide;
+
+    slide.onActiveChange.subscribe((slide:SlideComponent)=> {
+      this._changeDetectorRef.detectChanges();
+      this.currentSlide = slide;
+      this._activeSlideChanged.emit(slide.index);
+    });
+
+    this._activeSlideChanged.subscribe((index:number)=> {
+      if(index != slide.index) {
+        slide.active = false;
+      }
+      this._changeDetectorRef.detectChanges();
+    });
   }
 
   public removeSlide(slide: SlideComponent): void {
